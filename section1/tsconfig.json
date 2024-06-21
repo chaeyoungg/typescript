@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ESNext", //컴파일 할 자바스크립트의 버전 정의
+    "module": "ESNext", //모듈 옵션
+    "outDir": "dist", //컴파일해서 생성될 자바스크립트 파일들이 어디에 위치하면 좋을지 경로 정의
+    "strict": false, //엄격한 타입 검사 여부
+    "moduleDetection": "force", //파일을 어떤 모듈로 감지할 것인가에 대한 옵션
+    "skipLibCheck": true // 위 옵션은 타입 정의 파일(.d.ts 확장자를 갖는 파일을 의미합니다)의 타입 검사를 생략하는 옵션
+  },
+  "include": ["src"] //컴파일 할 폴더 경로 입력
+}
