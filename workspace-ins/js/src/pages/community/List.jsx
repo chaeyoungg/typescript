@@ -1,11 +1,13 @@
 import Pagination from "@/components/Pagination";
 import Search from "@/components/Search";
+import Spinner from "@/components/Spinner";
 import ListItem from "@/pages/community/ListItem";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 async function fetchPosts(type){
-  const url = `https://api.fesp.shop/posts?type=${type}`;
+  const url = `https://api.fesp.shop/posts?type=${type}&delay=5000`;
   const res = await fetch(url);
   return res.json();
 }
@@ -13,18 +15,30 @@ async function fetchPosts(type){
 export default function List(){
   const { type } = useParams();
 
-  const [data, setData] = useState([]);
+  const { isLoading, data, error } = useQuery({
+  // const { isLoading, data, error } = useSuspenseQuery({
+    queryKey: [type],
+    queryFn: () => {
+      // Promise 반환하는 함수
+      return fetchPosts(type);
+    },
+    staleTime: 1000*10, // 쿼리 실행후 캐시가 유지되는 시간(기본 0)
+  });
 
-  const fetchData = async (type) => {
-    const result = await fetchPosts(type);
-    setData(result.item);
-  }
+  // const [data, setData] = useState([]);
+  // const fetchData = async (type) => {
+  //   const result = await fetchPosts(type);
+  //   setData(result.item);
+  // }
+  // useEffect(() => {
+  //   fetchData(type);
+  // }, []);
 
-  useEffect(() => {
-    fetchData(type);
-  }, []);
+  const list = data?.item?.map(item => <ListItem key={item._id} item={ item } />);
 
-  const list = data.map(item => <ListItem key={item._id} item={ item } />);
+  // if(isLoading){
+  //   return <Spinner.FullScreen />
+  // }
 
   return (
     <main className="min-w-80 p-10">
@@ -59,6 +73,15 @@ export default function List(){
           </thead>
           <tbody>
 
+            { isLoading && (
+              <tr>
+                <td colSpan={6} className="py-20">
+                  <div className="flex justify-center">
+                    <Spinner.TargetArea />
+                  </div>
+                </td>
+              </tr>
+            ) }
             { list }
 
           </tbody>
