@@ -4,29 +4,61 @@ import { useForm } from "react-hook-form";
 
 const SERVER = import.meta.env.VITE_API_SERVER;
 
-async function addUser(formData){
-  // 이미지 업로드
-  if(formData.attach.length > 0){
-    const body = new FormData();
-    body.append('attach', formData.attach[0]);
-    const fileRes = await fetch(`${SERVER}/files`, {
-      method: 'POST',
-      body
-    });
 
-    if(!fileRes.ok){
-      throw new Error('파일 업로드 실패.');
-    }
-  }
-
-  // 회원 가입
-
-
-}
 
 export default function Signup(){
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  async function addUser(formData){
+    try{
+      // 이미지 업로드
+      if(formData.attach.length > 0){
+        const body = new FormData();
+        body.append('attach', formData.attach[0]);
+        const fileRes = await fetch(`${SERVER}/files`, {
+          method: 'POST',
+          body
+        });
+  
+        const resJson = await fileRes.json();
+  
+        if(!resJson.ok){
+          throw new Error('파일 업로드 실패.');
+        }
+  
+        formData.profileImage = resJson.item[0].path;
+      }
+  
+      // 회원 가입
+      formData.type = 'user';
+      delete formData.attach;
+  
+      const res = await fetch(`${SERVER}/users`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+  
+      const resData = await res.json();
+  
+      if(resData.ok){
+        alert(`${resData.item.name}님 회원가입을 환영합니다.`);
+      }else{ // API 서버의 에러 메시지 처리
+        if(resData.errors){
+          resData.errors.forEach(error => setError(error.path, { message: error.msg }));
+        }else if(resData.message){
+          alert(resData.message);
+        }
+      }
+    }catch(err){
+      // 네트워크 에러에 대한 처리
+      console.error(err);
+    }
+    
+  }
+
+  const { register, handleSubmit, formState: { errors }, setError } = useForm();
 
   return (
     <main className="min-w-80 flex-grow flex items-center justify-center">
