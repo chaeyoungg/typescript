@@ -3,8 +3,10 @@ import CommentNew from "@/pages/community/CommentNew";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
+const SERVER = import.meta.env.VITE_API_SERVER;
+
 async function fetchComments(postId){
-  const url = `https://api.fesp.shop/posts/${postId}/replies`;
+  const url = `${SERVER}/posts/${postId}/replies`;
   const res = await fetch(url);
   return res.json();
 }

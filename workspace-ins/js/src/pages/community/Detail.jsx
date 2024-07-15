@@ -2,11 +2,12 @@ import Spinner from "@/components/Spinner";
 import Submit from "@/components/Submit";
 import CommentList from "@/pages/community/CommentList";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
+const SERVER = import.meta.env.VITE_API_SERVER;
+
 async function fetchPost(_id){
-  const url = `https://api.fesp.shop/posts/${_id}`;
+  const url = `${SERVER}/posts/${_id}`;
   const res = await fetch(url);
   return res.json();
 }
@@ -14,7 +15,7 @@ async function fetchPost(_id){
 export default function Detail(){
   const { type, _id } = useParams();
 
-  const { isLoading, data, error } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: [type, _id],
     queryFn: () => {
       return fetchPost(_id);

@@ -2,12 +2,13 @@ import Pagination from "@/components/Pagination";
 import Search from "@/components/Search";
 import Spinner from "@/components/Spinner";
 import ListItem from "@/pages/community/ListItem";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
+const SERVER = import.meta.env.VITE_API_SERVER;
+
 async function fetchPosts(type){
-  const url = `https://api.fesp.shop/posts?type=${type}&delay=5000`;
+  const url = `${SERVER}/posts?type=${type}&delay=5000`;
   const res = await fetch(url);
   return res.json();
 }
@@ -15,7 +16,7 @@ async function fetchPosts(type){
 export default function List(){
   const { type } = useParams();
 
-  const { isLoading, data, error } = useQuery({
+  const { isLoading, data } = useQuery({
   // const { isLoading, data, error } = useSuspenseQuery({
     queryKey: [type],
     queryFn: () => {

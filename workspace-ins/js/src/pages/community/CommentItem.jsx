@@ -6,7 +6,7 @@ export default function CommentItem({ item }){
         <div className="flex justify-between items-center mb-2">
           <img
             className="w-8 mr-2 rounded-full"
-            src={`https://api.fesp.shop${ item.user.profile }`}
+            src={`${import.meta.env.VITE_API_SERVER}${ item.user.profile }`}
             alt="프로필 이미지"
           />
           <a href="" className="text-orange-400">{ item.user.name }</a>
