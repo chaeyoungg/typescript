@@ -1,5 +1,7 @@
+import Spinner from "@/components/Spinner";
 import Submit from "@/components/Submit";
 import CommentList from "@/pages/community/CommentList";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -11,14 +13,24 @@ async function fetchPost(_id){
 
 export default function Detail(){
   const { type, _id } = useParams();
-  const [data, setData] = useState(null);
-  const fetchData = async (_id) => {
-    const result = await fetchPost(_id);
-    setData(result.item);
-  }
-  useEffect(() => {
-    fetchData(_id);
-  }, []);
+
+  const { isLoading, data, error } = useQuery({
+    queryKey: [type, _id],
+    queryFn: () => {
+      return fetchPost(_id);
+    },
+    select: resData => resData.item,
+    staleTime: 1000*3
+  });
+
+  // const [data, setData] = useState(null);
+  // const fetchData = async (_id) => {
+  //   const result = await fetchPost(_id);
+  //   setData(result.item);
+  // }
+  // useEffect(() => {
+  //   fetchData(_id);
+  // }, []);
 
   return (
     <main className="container mx-auto mt-4 px-4">
@@ -41,14 +53,11 @@ export default function Detail(){
       </section>
 
       {/* 부분 화면 로딩중 */}
-      {/*
-      <div className="flex flex-col items-center">
-        <h3 className="mb-4 text-lg font-semibold">잠시만 기다려주세요.</h3>
-        <span>로딩중...</span>
-      </div>
-      */}
+      { isLoading && (
+        <Spinner.TargetArea />
+      ) }
       
-      <CommentList />
+      <CommentList replies={ data?.replies } />
 
     </main>
   );
