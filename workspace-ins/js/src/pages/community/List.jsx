@@ -1,8 +1,31 @@
 import Pagination from "@/components/Pagination";
 import Search from "@/components/Search";
 import ListItem from "@/pages/community/ListItem";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
+async function fetchPosts(type){
+  const url = `https://api.fesp.shop/posts?type=${type}`;
+  const res = await fetch(url);
+  return res.json();
+}
 
 export default function List(){
+  const { type } = useParams();
+
+  const [data, setData] = useState([]);
+
+  const fetchData = async (type) => {
+    const result = await fetchPosts(type);
+    setData(result.item);
+  }
+
+  useEffect(() => {
+    fetchData(type);
+  }, []);
+
+  const list = data.map(item => <ListItem key={item._id} item={ item } />);
+
   return (
     <main className="min-w-80 p-10">
       <div className="text-center py-4">
@@ -36,8 +59,7 @@ export default function List(){
           </thead>
           <tbody>
 
-            <ListItem />
-            <ListItem />
+            { list }
 
           </tbody>
         </table>
