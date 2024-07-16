@@ -1,6 +1,7 @@
 import InputError from "@/components/InputError";
 import Submit from "@/components/Submit";
 import { userState } from "@/recoil/user/atoms";
+import { ApiResWithValidation, SingleItem, User } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +9,12 @@ import { useSetRecoilState } from "recoil";
 
 const SERVER = import.meta.env.VITE_API_SERVER;
 
-async function login(formData){
+type LoginForm = {
+  email: string,
+  password: string,
+};
+
+async function login(formData: LoginForm): Promise<ApiResWithValidation<SingleItem<User>, LoginForm>>{
   const res = await fetch(`${SERVER}/users/login`, {
     method: 'POST',
     headers: {
@@ -23,7 +29,7 @@ export default function Login(){
   const navigate = useNavigate();
   // 상태값 변경
   const setUser = useSetRecoilState(userState);
-  const { register, handleSubmit, formState: { errors }, setError } = useForm();
+  const { register, handleSubmit, formState: { errors }, setError } = useForm<LoginForm>();
 
   const { mutate: checkLogin } = useMutation({
     retry: 3,
