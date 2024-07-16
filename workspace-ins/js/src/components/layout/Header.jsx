@@ -2,12 +2,20 @@ import Submit from "@/components/Submit";
 import Theme from "@/components/Theme";
 import { userState } from "@/recoil/user/atoms";
 import { Link } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 
 export default function Header(){
-  // 상태값을 꺼낼 때
-  const user = useRecoilValue(userState);
+  // // 상태값을 꺼낼 때
+  // const user = useRecoilValue(userState);
+  // // 상태값을 변경할 때
+  // const setUser = useSetRecoilState(userState);
 
+  const [user, setUser] = useRecoilState(userState);
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    setUser(null);
+  };
 
   return (
     <header className="px-8 min-w-80 bg-slate-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 transition-color duration-500 ease-in-out">
@@ -29,7 +37,7 @@ export default function Header(){
         <div className="w-1/2 order-1 flex justify-end items-center md:order-2 md:w-auto">
 
           { user ? (
-            <form action="/">
+            <form action="/" onSubmit={ handleLogout }>
               <p className="flex items-center">
                 <img 
                   className="w-8 rounded-full mr-2" 
