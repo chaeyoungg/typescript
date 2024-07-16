@@ -3,25 +3,34 @@ import Search from "@/components/Search";
 import Spinner from "@/components/Spinner";
 import ListItem from "@/pages/community/ListItem";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 
 const SERVER = import.meta.env.VITE_API_SERVER;
 
-async function fetchPosts(type){
-  const url = `${SERVER}/posts?type=${type}&delay=${import.meta.env.VITE_DELAY}`;
+async function fetchPosts(type, page, keyword){
+  const params = new URLSearchParams();
+  params.set('type', type);
+  page && params.set('page', page);
+  keyword && params.set('keyword', keyword);
+  params.set('limit', import.meta.env.VITE_LIMIT);
+  params.set('delay', import.meta.env.VITE_DELAY);
+  const url = `${SERVER}/posts?${params.toString()}`;
   const res = await fetch(url);
   return res.json();
 }
 
 export default function List(){
   const { type } = useParams();
+  const [searchParams] = useSearchParams();
 
   const { isLoading, data } = useQuery({
   // const { isLoading, data, error } = useSuspenseQuery({
-    queryKey: [type],
+    queryKey: [type, searchParams.toString()],
     queryFn: () => {
       // Promise 반환하는 함수
-      return fetchPosts(type);
+      const page = searchParams.get('page');
+      const keyword = searchParams.get('keyword');
+      return fetchPosts(type, page, keyword);
     },
     staleTime: 1000*60, // 쿼리 실행후 캐시가 유지되는 시간(기본 0)
   });
@@ -89,7 +98,7 @@ export default function List(){
         </table>
         <hr />
 
-        <Pagination />
+        <Pagination { ...data?.pagination } />
 
       </section>
     </main>
