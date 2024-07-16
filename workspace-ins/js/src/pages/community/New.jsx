@@ -1,8 +1,10 @@
 import InputError from "@/components/InputError";
 import Submit from "@/components/Submit";
+import { userState } from "@/recoil/user/atoms";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 
 const SERVER = import.meta.env.VITE_API_SERVER;
 
@@ -20,16 +22,19 @@ async function addPost(type, formData, accessToken){
 }
 
 export default function New(){
+  const user = useRecoilValue(userState);
+
   const navigate = useNavigate();
   const { type } = useParams();
   const { mutate } = useMutation({
     mutationFn(formData){
-      return addPost(type, formData, accessToken);
+      return addPost(type, formData, user?.accessToken);
     },
     onSuccess(resData){
       // mutationFn이 에러 없이 실행되면 호출되는 콜백 함수
       if(resData.ok){
         navigate(`/${type}`);
+        // navigate(-1)
       }else{
         console.error(resData.message);
       }

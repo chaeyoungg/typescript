@@ -13,10 +13,10 @@ const queryClient = new QueryClient();
 
 function App() {
 
-  // const { isDarkMode } = useThemeStore();
+  const { isDarkMode } = useThemeStore();
 
   // 렌더링 최적화를 위해서 수동으로 필요한 속성만 반환받아서 사용
-  const isDarkMode = useThemeStore(state => state.isDarkMode);
+  // const isDarkMode = useThemeStore(state => state.isDarkMode);
 
   if(isDarkMode){
     document.documentElement.classList.add('dark');
