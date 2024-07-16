@@ -3,12 +3,12 @@ import Search from "@/components/Search";
 import Spinner from "@/components/Spinner";
 import ListItem from "@/pages/community/ListItem";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const SERVER = import.meta.env.VITE_API_SERVER;
 
 async function fetchPosts(type){
-  const url = `${SERVER}/posts?type=${type}&delay=5000`;
+  const url = `${SERVER}/posts?type=${type}&delay=${import.meta.env.VITE_DELAY}`;
   const res = await fetch(url);
   return res.json();
 }
@@ -23,7 +23,7 @@ export default function List(){
       // Promise 반환하는 함수
       return fetchPosts(type);
     },
-    staleTime: 1000*10, // 쿼리 실행후 캐시가 유지되는 시간(기본 0)
+    staleTime: 1000*60, // 쿼리 실행후 캐시가 유지되는 시간(기본 0)
   });
 
   // const [data, setData] = useState([]);
@@ -50,7 +50,7 @@ export default function List(){
         
         <Search />
 
-        <a href="/info/new" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">글작성</a>
+        <Link to="/info/new" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">글작성</Link>
       </div>
       <section className="pt-10">
         <table className="border-collapse w-full table-fixed">

@@ -1,7 +1,7 @@
 import InputError from "@/components/InputError";
 import Submit from "@/components/Submit";
 import { userState } from "@/recoil/user/atoms";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -22,6 +22,7 @@ async function addPost(type, formData, accessToken){
 }
 
 export default function New(){
+  const queryClient = useQueryClient();
   const user = useRecoilValue(userState);
 
   const navigate = useNavigate();
@@ -33,6 +34,9 @@ export default function New(){
     onSuccess(resData){
       // mutationFn이 에러 없이 실행되면 호출되는 콜백 함수
       if(resData.ok){
+        queryClient.invalidateQueries({
+          queryKey: [type]
+        });
         navigate(`/${type}`);
         // navigate(-1)
       }else{
