@@ -20,6 +20,7 @@ async function fetchPosts(type, page, keyword){
 }
 
 export default function List(){
+  console.log('List render...');
   const { type } = useParams();
   const [searchParams] = useSearchParams();
 
