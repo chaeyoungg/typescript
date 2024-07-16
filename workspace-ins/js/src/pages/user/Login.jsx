@@ -1,8 +1,10 @@
 import InputError from "@/components/InputError";
 import Submit from "@/components/Submit";
+import { userState } from "@/recoil/user/atoms";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 
 const SERVER = import.meta.env.VITE_API_SERVER;
 
@@ -19,17 +21,25 @@ async function login(formData){
 
 export default function Login(){
   const navigate = useNavigate();
+  // 상태값 변경
+  const setUser = useSetRecoilState(userState);
   const { register, handleSubmit, formState: { errors }, setError } = useForm();
 
   const { mutate: checkLogin } = useMutation({
+    retry: 3,
     mutationFn(formData){
       return login(formData);
     },
     onSuccess(resData){
       if(resData.ok){
         // 로그인 상태 저장
-
-
+        setUser({
+          _id: resData.item._id,
+          name: resData.item.name,
+          profile: resData.item.profileImage,
+          accessToken: resData.item.token.accessToken,
+          refreshToken: resData.item.token.refreshToken,
+        });
 
         alert(`${resData.item.name}님 로그인 되었습니다.`);
         navigate('/');
@@ -46,6 +56,8 @@ export default function Login(){
       alert('잠시후 다시 이용해 주세요.');
     }
   });
+
+
 
   return (
     <main className="min-w-80 flex-grow flex items-center justify-center">

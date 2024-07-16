@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React from 'react';
 import Spinner from '@/components/Spinner';
+import { RecoilRoot } from 'recoil';
 
 
 // react-query 사용
@@ -12,9 +13,11 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={ queryClient }>
-      <React.Suspense fallback={ <Spinner.FullScreen /> }>
-        <RouterProvider router={ router } />
-      </React.Suspense>
+      <RecoilRoot>
+        <React.Suspense fallback={ <Spinner.FullScreen /> }>
+          <RouterProvider router={ router } />
+        </React.Suspense>
+      </RecoilRoot>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   )
