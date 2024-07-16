@@ -1,17 +1,25 @@
 import InputError from "@/components/InputError";
 import Submit from "@/components/Submit";
+import { ApiResWithValidation, SingleItem, User } from "@/types";
 import { useForm } from "react-hook-form";
 
 const SERVER = import.meta.env.VITE_API_SERVER;
 
-
+type UserForm = {
+  type: 'user' | 'seller',
+  name: string,
+  email: string,
+  password: string,
+  attach?: string | string[],
+  profileImage?: string,
+};
 
 export default function Signup(){
 
-  async function addUser(formData){
+  async function addUser(formData: UserForm){
     try{
       // 이미지 업로드
-      if(formData.attach.length > 0){
+      if(formData.attach !== undefined && formData.attach.length > 0){
         const body = new FormData();
         body.append('attach', formData.attach[0]);
         const fileRes = await fetch(`${SERVER}/files`, {
@@ -40,12 +48,12 @@ export default function Signup(){
         body: JSON.stringify(formData)
       });
   
-      const resData = await res.json();
+      const resData: ApiResWithValidation<SingleItem<User>, UserForm> = await res.json();
   
       if(resData.ok){
         alert(`${resData.item.name}님 회원가입을 환영합니다.`);
       }else{ // API 서버의 에러 메시지 처리
-        if(resData.errors){
+        if('errors' in resData){
           resData.errors.forEach(error => setError(error.path, { message: error.msg }));
         }else if(resData.message){
           alert(resData.message);
@@ -58,7 +66,7 @@ export default function Signup(){
     
   }
 
-  const { register, handleSubmit, formState: { errors }, setError } = useForm();
+  const { register, handleSubmit, formState: { errors }, setError } = useForm<UserForm>();
 
   return (
     <main className="min-w-80 flex-grow flex items-center justify-center">
