@@ -31,7 +31,11 @@ export default function Login(){
   const setUser = useSetRecoilState(userState);
   const { register, handleSubmit, formState: { errors }, setError } = useForm<LoginForm>();
 
-  const { mutate: checkLogin } = useMutation({
+  // useMutation<TData = unknown, TError = DefaultError, TVariables = void, ...>
+  // TData: mutationFn 리턴 타입(resData)
+  // TError: 발생하는 에러의 타입(err)
+  // TVariables: mutationFn 인자값의 타입(formData)
+  const { mutate: checkLogin } = useMutation<ApiResWithValidation<SingleItem<User>, LoginForm>, Error, LoginForm>({
     retry: 3,
     mutationFn(formData){
       return login(formData);
@@ -43,14 +47,14 @@ export default function Login(){
           _id: resData.item._id,
           name: resData.item.name,
           profile: resData.item.profileImage,
-          accessToken: resData.item.token.accessToken,
-          refreshToken: resData.item.token.refreshToken,
+          accessToken: resData.item.token!.accessToken,
+          refreshToken: resData.item.token!.refreshToken,
         });
 
         alert(`${resData.item.name}님 로그인 되었습니다.`);
         navigate('/');
       }else{ // API서버에서 에러 응답
-        if(resData.errors){
+        if('errors' in resData){
           resData.errors.forEach(error => setError(error.path, { message: error.msg }));
         }else if(resData.message){
           alert(resData.message);
@@ -63,8 +67,6 @@ export default function Login(){
     }
   });
 
-
-
   return (
     <main className="min-w-80 flex-grow flex items-center justify-center">
       <div className="p-8 border border-gray-200 rounded-lg w-full max-w-md dark:bg-gray-600 dark:border-0">
@@ -72,7 +74,7 @@ export default function Login(){
           <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-200">로그인</h2>
         </div>
 
-        <form action="/" onSubmit={ handleSubmit(checkLogin) }>
+        <form action="/" onSubmit={ handleSubmit(formData => checkLogin(formData)) }>
           <div className="mb-4">
             <label className="block text-gray-700 dark:text-gray-200 mb-2" htmlFor="email">이메일</label>
             <input

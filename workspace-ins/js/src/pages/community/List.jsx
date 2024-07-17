@@ -33,7 +33,7 @@ export default function List(){
       const keyword = searchParams.get('keyword');
       return fetchPosts(type, page, keyword);
     },
-    staleTime: 1000*60, // 쿼리 실행후 캐시가 유지되는 시간(기본 0)
+    staleTime: 1000*10, // 쿼리 실행후 캐시가 유지되는 시간(기본 0)
   });
 
   // const [data, setData] = useState([]);

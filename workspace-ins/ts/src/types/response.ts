@@ -34,7 +34,7 @@ export interface CoreErrorRes extends CoreRes{
 
 // 인증 실패 응답
 export interface AuthErrorRes extends CoreErrorRes{
-  errorName: "EmptyAuthorization | TokenExpiredError | JsonWebTokenError"
+  errorName: "EmptyAuthorization" | "TokenExpiredError" | "JsonWebTokenError"
 }
 
 // 데이터 검증 실패 메세지(E: 검증에 사용될 속성값 목록)
