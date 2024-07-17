@@ -8,7 +8,7 @@ import { useRecoilValue } from "recoil";
 
 const SERVER = import.meta.env.VITE_API_SERVER;
 
-async function fetchPost(_id){
+async function fetchPost(_id: string){
   const url = `${SERVER}/posts/${_id}`;
   const res = await fetch(url);
   return res.json();
@@ -20,7 +20,7 @@ export default function Detail(){
   const { isLoading, data } = useQuery({
     queryKey: [type, _id],
     queryFn: () => {
-      return fetchPost(_id);
+      return fetchPost(_id!);
     },
     select: resData => resData.item,
     staleTime: 1000*3
@@ -68,7 +68,8 @@ export default function Detail(){
         <Spinner.TargetArea />
       ) }
       
-      <CommentList replies={ data?.replies } />
+      {/* <CommentList replies={ data?.replies } /> */}
+      <CommentList />
 
     </main>
   );

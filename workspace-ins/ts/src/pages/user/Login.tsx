@@ -4,6 +4,7 @@ import { userState } from "@/recoil/user/atoms";
 import { ApiResWithValidation, SingleItem, User } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 
@@ -25,6 +26,7 @@ async function login(formData: LoginForm): Promise<ApiResWithValidation<SingleIt
   return res.json();
 }
 
+
 export default function Login(){
   const navigate = useNavigate();
   // 상태값 변경
@@ -40,6 +42,7 @@ export default function Login(){
     mutationFn(formData){
       return login(formData);
     },
+    
     onSuccess(resData){
       if(resData.ok){
         // 로그인 상태 저장
@@ -67,6 +70,7 @@ export default function Login(){
     }
   });
 
+ 
   return (
     <main className="min-w-80 flex-grow flex items-center justify-center">
       <div className="p-8 border border-gray-200 rounded-lg w-full max-w-md dark:bg-gray-600 dark:border-0">
@@ -74,7 +78,7 @@ export default function Login(){
           <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-200">로그인</h2>
         </div>
 
-        <form action="/" onSubmit={ handleSubmit(formData => checkLogin(formData)) }>
+        <form action="/" onSubmit={ handleSubmit(formData => checkLogin(formData) ) }>
           <div className="mb-4">
             <label className="block text-gray-700 dark:text-gray-200 mb-2" htmlFor="email">이메일</label>
             <input

@@ -2,14 +2,18 @@ import Pagination from "@/components/Pagination";
 import Search from "@/components/Search";
 import Spinner from "@/components/Spinner";
 import ListItem from "@/pages/community/ListItem";
+import { ApiRes, MultiItem, Post } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 
 const SERVER = import.meta.env.VITE_API_SERVER;
 
-async function fetchPosts(type, page, keyword){
+async function fetchPosts(
+    type: string | undefined, 
+    page: string | null, 
+    keyword: string | null): Promise<ApiRes<MultiItem<Post>>>{
   const params = new URLSearchParams();
-  params.set('type', type);
+  type && params.set('type', type);
   page && params.set('page', page);
   keyword && params.set('keyword', keyword);
   params.set('limit', import.meta.env.VITE_LIMIT);
@@ -21,7 +25,11 @@ async function fetchPosts(type, page, keyword){
 
 export default function List(){
   console.log('List render...');
+  // /info?page=3
+  // type = info
   const { type } = useParams();
+
+  // srarchParams = { page: 3 }
   const [searchParams] = useSearchParams();
 
   const { isLoading, data } = useQuery({
@@ -45,7 +53,10 @@ export default function List(){
   //   fetchData(type);
   // }, []);
 
-  const list = data?.item?.map(item => <ListItem key={item._id} item={ item } />);
+  let list: JSX.Element[] = [];
+  if(data?.ok){
+    list = data?.item?.map(item => <ListItem key={item._id} item={ item } />);
+  }
 
   // if(isLoading){
   //   return <Spinner.FullScreen />
@@ -99,7 +110,7 @@ export default function List(){
         </table>
         <hr />
 
-        <Pagination { ...data?.pagination } />
+        { data?.ok && <Pagination { ...data?.pagination } /> }
 
       </section>
     </main>
